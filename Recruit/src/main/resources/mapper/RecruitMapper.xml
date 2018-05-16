@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recruit.mapper.RecruitMapper">
+	<select id="getRecruitByName" resultType="int">
+		SELECT r.*,c.name AS categoryName FROM Recruit AS r LEFT JOIN Category AS c ON(r.categoryid=c.id)
+		<where>
+			 <if test="id>0">
+			 	and id=#{id}
+			 </if>
+			 <if test="name!=null and name!=''">
+			 	and title LIKE CONCAT('%',#{name},'%')
+			 </if>
+			 <if test="cid>0">
+			 	and categoryId=#{categoryId};
+			 </if>
+		</where>
+	</select>
+	<select id="getRecruit" resultType="recruit.entity.Recruit">
+		select * from recruit 
+		<where>
+			<if test="cname!=null and cname!=''">
+				and name like CONCAT('%',#{cname},'%')
+			</if>
+			<if test="address!=null and address!=''">
+				and address = #{address}
+			</if>
+			<if test="diploma!=null and diploma!=''">
+				and diploma = #{diploma}
+			</if>
+			<if test="work!=null and work!=''">
+				and work = #{work}
+			</if>
+			<if test="today>0">
+				and DATEDIFF(NOW(),publishdate)&lt;=#{today}
+			</if>
+			and state=#{state}
+		</where>
+		order by  publishdate desc limit #{stratIndex},#{maxSize}
+	</select>
+	<select id="findRecruit" resultType="recruit.entity.Recruit">
+		SELECT r.*,c.name AS categoryName,c.id AS categoryId FROM Recruit AS r LEFT JOIN Category AS c ON(r.categoryid=c.id)
+		<where>
+			<if	test="name!=null and name!=''">
+				and r.name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="state!=null and state!=''">
+				and r.state=#{state}
+			</if>
+		</where>
+		order by  publishdate desc limit #{stratIndex},#{maxSize}
+	</select>
+	<select id="findRecruitCount" resultType="int">
+		SELECT count(r.id) FROM Recruit AS r LEFT JOIN Category AS c ON(r.categoryid=c.id)
+		<where>
+			<if	test="name!=null and name!=''">
+				and r.name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="state!=null and state!=''">
+				and r.state=#{state}
+			</if>
+		</where>
+	</select>
+	<update id="update">
+		update Recruit set name=#{name},companyName=#{companyName},tempt=#{tempt},detail=#{detail},
+		salary=#{salary},address=#{address},aredetailed=#{aredetailed},diploma=#{diploma},work=#{work},
+		publishDate=#{publishDate},state=#{state} 
+		<if test="categoryId>0">
+			,categoryId=#{categoryId}
+		</if>
+		where id=#{id}
+	</update>
+	<insert id="add">
+		INSERT INTO Recruit(`categoryid`,companyname,NAME,salary,tempt,detail,address,aredetailed,diploma,`work`,publishdate,state)
+ 		VALUES(#{categoryId},#{companyName},#{name},#{salary},#{tempt},#{detail},#{address},#{aredetailed},#{diploma},#{work},#{publishDate},#{state})
+	</insert>
+	<update id="del" parameterType="int">
+		update Recruit set state='已删除' where id=#{id}
+	</update>
+</mapper>

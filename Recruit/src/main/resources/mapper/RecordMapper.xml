@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recruit.mapper.RecordMapper">
+	<resultMap type="recruit.entity.Record" id="recordBean">  
+        <id column="id" property="id"/>
+        <result column="sendDate" property="sendDate"/>
+        <result column="state" property="state"/>  
+        <!-- 多对一的关系 -->  
+        <!-- property: 指的是属性的值, javaType：指的是属性的类型-->  
+        <association property="seeker" javaType="recruit.entity.Seeker" >  
+            <id column="id" property="id"/>  
+            <result column="name" property="name"/>  
+            <result column="phone" property="phone"/>  
+            <result column="address" property="address"/>
+            <result column="diploma" property="diploma"/>
+            <result column="work" property="work"/>
+            <result column="email" property="email"/>
+            <result column="password" property="password"/>
+            <result column="state" property="state"/>  
+        </association>  
+        <association property="reruit" javaType="recruit.entity.Recruit">  
+            <id column="rid" property="id"/>  
+            <result column="rname" property="name"/>   
+        </association> 
+    </resultMap>  
+    <select id="findRecord" resultMap="recordBean"> 
+    	select r.*,s.*,re.id as rid,re.name as rname from record r,recruit re,seeker s
+    	order by r.sendDate desc limit #{stratIndex},#{maxSize}
+    </select>
+</mapper>

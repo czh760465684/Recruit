@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop.xsd
+     http://www.springframework.org/schema/context 
+     http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<!-- 配置dbcp数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/RecruitDB" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	<!-- 配置MyBatis的SessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+		<property name="typeAliasesPackage" value="recruit.entity" />
+	</bean>
+	<!-- 扫描DAO接口所在包名，Spring会自动代理生成其下的接口实现类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="recruit.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	<!-- 事务管理器，用于事务通知  -->
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean> 
+    <!-- 配置事务通知  -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="add*" propagation="REQUIRED" timeout="60" />
+            <tx:method name="update*" propagation="REQUIRED" timeout="60"  />
+            <tx:method name="delete*" propagation="REQUIRED"  timeout="60"  />
+            <tx:method name="get*" read-only="true" timeout="60" />
+            <tx:method name="find*" read-only="true" timeout="60" />
+        </tx:attributes>
+    </tx:advice>
+    <!-- AOP 事务通知 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* recruit.biz..*.*(..))" id="bizMethod"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="bizMethod" />
+	</aop:config>
+	<!-- bean注解扫描 -->
+	<context:component-scan base-package="recruit" />
+</beans>

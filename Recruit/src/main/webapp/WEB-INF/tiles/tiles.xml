@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+ "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+ "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<!-- 定义模板 -->
+	<definition name="adminTemplate" template="/WEB-INF/jsp/shared/adminTemplate.jsp">
+		<put-attribute name="header"
+			value="/WEB-INF/jsp/share/admin-header.jsp" />
+		<put-attribute name="footer"
+			value="/WEB-INF/jsp/share/footer.jsp" />
+	</definition>
+	<!-- 定义具体页面组成 -->
+	<definition name="admin/index" extends="adminTemplate">
+		<put-attribute name="title" value="Home" />
+		<put-attribute name="main" value="/WEB-INF/jsp/admin/index.jsp" />
+	</definition>
+	<definition name="admin/category" extends="adminTemplate">
+		<put-attribute name="title" value="分类管理" />
+		<put-attribute name="main" value="/WEB-INF/jsp/admin/category.jsp" />
+	</definition>
+	<definition name="admin/record" extends="adminTemplate">
+		<put-attribute name="title" value="分类管理" />
+		<put-attribute name="main" value="/WEB-INF/jsp/admin/record.jsp" />
+	</definition>
+	<definition name="admin/recruit" extends="adminTemplate">
+		<put-attribute name="title" value="分类管理" />
+		<put-attribute name="main" value="/WEB-INF/jsp/admin/recruit.jsp" />
+	</definition>
+</tiles-definitions> 
